@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Report form(报表)</title>
+<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+  <link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="./myJS/jquery2.0.js"></script>
+</head>
+<body>
+ <div id="head"></div>
+		<script type="text/javascript">
+		 
+			$("#head").load("./head/head.jsp");
+		</script>
+		
+<div >
+
+<div style="width: 10%;height: 100%;float: left;" id="left_bar" onclick="left_bar(event)">
+	<ul class="nav nav-pills nav-stacked">
+		<li role="presentation" class="active" id="day"><a>日结报表</a></li>
+		<li role="presentation" id="month"><a>月结报表</a></li>
+	</ul>
+</div> 
+<div id="body_div" style="float:left;width:80%;height: 100%"></div>
+</div>
+<script type="text/javascript">
+			$("#body_div").load("./report_form_day.html");
+</script>
+<script type="text/javascript">
+	function left_bar(e){
+		var day = $("#day");
+		var month = $("#month");
+		if($(e.target).text() == "日结报表"){
+			day.addClass("active");
+			month.removeClass("active");
+			$("#body_div").load("./report_form_day.html");
+		}else{
+			month.addClass("active");
+			day.removeClass("active");
+			$("#body_div").load("./report_form_month.html");
+		}
+		//console.info($(e.target).text());
+	}
+</script>
+</body>
+</html>

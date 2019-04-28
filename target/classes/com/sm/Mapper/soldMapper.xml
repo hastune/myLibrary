@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sm.Mapper.soldMapper">
+
+	<resultMap type="com.sm.response.soldResp" id="soldResp">
+		<association property="sold" javaType="com.sm.beans.sold">
+			<id column="id" jdbcType="INTEGER" property="id"/>
+			<result column="amount" jdbcType="VARCHAR" property="amount"/>
+			<result column="sum" jdbcType="DECIMAL" property="sum"/>
+			<result column="time" jdbcType="TIMESTAMP" property="time"/>
+		</association>
+		<association property="product" javaType="com.sm.beans.product">
+			<id column="id" jdbcType="INTEGER" property="id"/>
+			<result column="name" jdbcType="VARCHAR" property="name"/>
+			<result column="amount" jdbcType="VARCHAR" property="amount"/>
+			<result column="kind" jdbcType="VARCHAR" property="kind"/>
+			<result column="type" jdbcType="DECIMAL" property="price"/>
+			<result column="updateTime" jdbcType="TIMESTAMP" property="updateTime"/>
+		</association>
+	</resultMap>
+	
+	<select id="get" resultMap="soldResp">
+		select 
+		s.id,
+		s.amount,
+		s.sum,
+		date_format(s.time, '%Y-%c-%d %h:%i:%s') as time,
+		p.name as name,
+		p.type as price,
+		p.kind  
+		FROM ${tableName1} s 
+		left join ${tableName2} p 
+		on s.id = p.id
+		where 
+		DATE_SUB(CURDATE(), INTERVAL ${day} DAY) &lt;= date(time)
+		limit #{start},10
+		<if test="kind !=null ">
+			and p.kind = #{kind}
+		</if>
+	</select>
+	
+	<select id="em_get" resultMap="soldResp">
+		select 
+		s.id, 
+		sum(s.amount) as amount,
+		 sum(s.sum) as sum, 
+		 p.name as name,
+		 p.kind 
+		FROM ${tableName1} s 
+		left join ${tableName2} p 
+		on s.id = p.id
+		where 
+		DATE_SUB(CURDATE(), INTERVAL ${day} DAY) &lt;= date(time)
+		<if test="kind !=null ">
+			and p.kind = #{kind}
+		</if>
+		group by id;
+	</select>
+	
+	<select id="EChartsData" resultType="com.sm.response.soldResponce">
+		select 
+		sum(s.amount) as amount,
+		sum(s.sum) as sum,
+		p.kind  as kind
+		FROM ${tableName1} s 
+		left join ${tableName2} p 
+		on s.id = p.id 
+		where 
+		DATE_SUB(CURDATE(), INTERVAL ${day} DAY) &lt;= date(time)
+		group by p.kind
+	</select>
+	
+<!-- 	<select id = "getTurnover" statementType="CALLABLE" resultType="double" parameterType="int"> -->
+<!-- 		call getTurnover(#{p_id}) -->
+<!-- 	</select> -->
+	
+	<select id="count" resultType="java.lang.Integer">
+		select count(0) from ${tableName}
+		<if test="day != 0">
+			where 
+			DATE_SUB(CURDATE(), INTERVAL ${day} DAY) &lt;= date(time)
+		</if>
+	</select>
+	
+	<insert id="add">
+			insert into ${tableName} 
+			(id,amount,sum,time) values (#{s.id},#{s.amount},#{s.sum},#{s.time})
+	</insert>
+	
+</mapper>

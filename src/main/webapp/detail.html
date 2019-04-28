@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>详情</title>
+<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+	<table id="table_1" class="table table-hover">
+		<tr>
+			<td>商品名</td>
+			<td>售出数量</td>
+			<td>单价</td>
+			<td>时间</td>
+			<td>总价</td>
+			<td>经手人</td>
+		</tr>
+	</table>
+</body>
+ <script src="./myJS/jquery2.0.js"></script>
+<script>
+	
+$(document).ready(function(){
+	  getRecord(0);
+	});
+	
+function getRecord(num){
+	  $.get("sold/get.action",{limit:num},function(data){
+		  for(var i = 0 ; i < data.length; i++){
+			  console.info(data[i]);
+			  //计算营业额
+			  var sum = data[i].price*data[i].amount;
+			  var tr = $("<tr></tr>");
+			  
+			  var td1 = $("<td></td>");
+			  var td2 = $("<td></td>");
+			  var td3 = $("<td></td>");
+			  var td4 = $("<td></td>");
+			  var td5 = $("<td></td>");
+			  var td6 = $("<td></td>");
+			  
+			  td1.text(data[i].name);
+			  td2.text(data[i].amount);
+			  td3.text("￥"+data[i].price);
+			  td4.text(data[i].newTime);
+			  td5.text("￥"+sum);
+			  td6.text(data[i].username);
+			  
+			  tr.append(td1);
+			  tr.append(td2);
+			  tr.append(td3);
+			  tr.append(td4);
+			  tr.append(td5);
+			  tr.append(td6);
+			  
+			  $("#table_1").append(tr);
+			  }
+	  });
+}
+</script>
+</html>

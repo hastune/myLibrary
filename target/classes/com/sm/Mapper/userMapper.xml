@@ -1,0 +1,67 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sm.Mapper.userMapper">
+	
+	<select id="searchByUser" parameterType="user" resultType="user">
+ 		select * from user where 2>1
+	 	<if test="username !=null">
+	 		and username = #{username}
+	 	</if>
+	 	<if test="password !=null">
+	 		and password = #{password}
+	 	</if>
+	 	<if test="id != 0">
+	 		and id = #{id}
+	 	</if>
+ 	</select>
+ 	
+ 	<insert id = "register" parameterType="user">
+ 		insert into user (username,password,privilege_id) values
+ 		(
+ 			#{username},
+ 			#{password},
+ 			#{privilege_id}
+ 		)
+ 	</insert>
+ 	
+ 	<select id = "antiDuplicate" parameterType="user" resultType="java.lang.Integer">
+ 		select count(1) from user
+ 		where 2>1 
+ 		<if test="username != null">
+ 			and username = #{username}
+ 		</if>
+ 		<if test="id != null">
+ 			and id = #{id}
+ 		</if>
+ 	</select>
+ 	
+ 	<update id="createSold" parameterType="java.lang.String">
+ 		 CREATE TABLE ${newTableName}(
+ 		 	id INT(10) NULL,
+ 		 	name VARCHAR(30) NULL,
+ 		 	price DECIMAL(30,2) NULL,
+ 		 	amount INT(30) NULL,
+ 		 	sum DECIMAL(30,2) NULL
+ 		 )
+ 	</update>
+ 	<update id="createProduct" parameterType="java.lang.String">
+ 		 CREATE TABLE ${newTableName} (
+		  `id` int(10) NOT NULL AUTO_INCREMENT,
+		  `amount` int(255) DEFAULT NULL,
+		  `updateTime` datetime(6) DEFAULT NULL,
+		  `name` varchar(255) DEFAULT NULL,
+		  `type` int(1) DEFAULT '0' COMMENT '0 未上架 1 上架',
+		  PRIMARY KEY (`id`)
+		) 
+ 	</update>
+ 	
+ 	<update id="hire">
+ 		update user 
+ 		set p_id = #{p_id} 
+ 		where id = #{id}
+ 	</update>
+ 	
+ 	<select id="getConfig" resultType="com.sm.beans.privateConfig">
+ 		select * from privateconfig
+ 	</select>
+ 	
+</mapper>

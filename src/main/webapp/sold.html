@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+  <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+  <link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="./myJS/jquery2.0.js"></script>
+<title>sold</title>
+</head>
+<body>
+	<div id="head"></div>
+		<script type="text/javascript">
+		 
+			$("#head").load("./head/head.jsp");
+		</script>
+
+		<div class="row">
+			<div class="col-md-4">
+				<h2>促销活动查询</h2>
+				
+				<div>
+					<span>输入促销活动类型</span>
+					<input id="c_type"/>
+					<button onclick="search_discountByType()">查询</button>
+				</div>
+				<br/>
+				<div>
+					<table class="table table-hover" id="dis">
+						<tr>
+							<td>促销类型</td>
+							<td>适用商品</td>
+							<td>具体内容</td>
+							<td>活动描述</td>
+						</tr>
+					</table>
+				</div>
+				
+			</div>
+			
+			<div class="text-center col-md-8 ">
+				<form class="form-inline">
+				<h2>商品销售</h2>
+					<div class="form-group">
+					<label class="control-label">类型:</label>
+					<select  class="form-control" onchange="kind_change()" id = "type">
+						<option>--请选择--</option>
+					</select>
+					</div>
+					<label>  名称:</label>
+					<select  class="form-control" id="name" onchange="name_change()">
+						<option>--请选择--</option>
+					</select>
+					<br/>
+					<label>库存:</label>
+					<label id ="stock">1</label>
+					<br/>
+					<label>单价:</label>
+					<label id ="price">99.9/斤</label>
+					<br/>
+					<label>购买数量:</label>
+					<input placeholder="请输入购买数量"  id= "num" onkeyup="sysIn()"/>
+					<button type="button" id="get_discount_btn">点击查看是否有优惠活动</button>
+					<br/>
+					<div id="discont"></div>
+					<br/>
+					<label class="control-label">总价:</label>
+					<label id ="sum">0</label>
+				</form>
+				<label id="product_id"  hidden></label>
+				<button id="sub" class="btn btn-default" >提交</button>
+			</div>
+		</div>
+		
+</body>
+<script type="text/javascript">
+var tree = [];
+$(function () {
+	search();
+	
+});
+
+function search(){
+	tree = [];
+	$.post("product/em_search.action",	{page:-1},function(resp){
+		//console.info(resp);
+		for(var i = 0 ; i<resp.msg.length;i++){
+			if(tree.length == 0){
+				var kind1 = {name:resp.msg[i].kind,child:[]};
+				//添加子节点
+				var name = {name:resp.msg[i].name,amount:resp.msg[i].amount,
+									price:resp.msg[i].type,id:resp.msg[i].id};
+				kind1.child.push(name);
+				tree.push(kind1);
+			}else{
+				var length = tree.length;
+				for(var j = 0 ; j<length;j++){
+					//判断当前商品类型是否在tree中的已经包含，包含则将当前商品添加到子节点 否则添加新的父节点，
+					if(resp.msg[i].kind == tree[j].name){
+						//添加到子节点
+						var name = {name:resp.msg[i].name,amount:resp.msg[i].amount,
+								price:resp.msg[i].type,id:resp.msg[i].id};
+						tree[j].child.push(name);
+						break;
+					}else{
+						//添加新kind
+						var kind1 = {name:resp.msg[i].kind,child:[]};
+						//添加子节点
+						var name = {name:resp.msg[i].name,amount:resp.msg[i].amount,
+											price:resp.msg[i].type,id:resp.msg[i].id};
+						kind1.child.push(name);
+						tree.push(kind1);
+						break;
+					}
+				}
+			}
+			
+		}
+		//将数据填充到类型选择的select标签中去
+		var html = "";
+		for(var i = 0 ; i<tree.length;i++){
+			html +=  "<option>"+tree[i].name+"</option>";
+		}
+		$("#type").html(html);
+		html= "";
+		for(var j = 0 ;j<tree[0].child.length;j++){
+			html +="<option>"+tree[0].child[j].name+"</option>";
+		}
+		$("#product_id").text(tree[0].child[0].id);
+		$("#stock").text(tree[0].child[0].amount);
+		$("#price").text(tree[0].child[0].price);
+		$("#name").html(html);
+	});
+}
+
+	function kind_change(){
+		var type =$("#type").get(0).value;
+		var html = "";
+		for(var i = 0 ; i< tree.length;i++){
+			stock = tree[i].child[0].amount;
+			price = tree[i].child[0].price;
+			if(type == tree[i].name){
+				//取出child中的数据
+				//console.info( tree[i]);
+				for(var j = 0 ;j<tree[i].child.length;j++){
+					if(tree[i].child[j].price != 0){
+						html +="<option>"+tree[i].child[j].name+"</option>";
+					}else{
+						html +="<option>该类别没有商品</option>";
+						stock = 0;
+					}
+				}
+				$("#name").html(html);
+				$("#stock").text(stock);
+				$("#price").text(price);
+				$("#product_id").text(tree[i].child[0].id);
+			}
+		}
+	}
+	
+	function name_change(){
+		var type =$("#type").get(0).value;
+		var name =$("#name").get(0).value;
+		var sum,stock,price;
+		for(var i  = 0;i<tree.length;i++){
+			if(type == tree[i].name){
+				for(var j = 0 ;j<tree[i].child.length;j++){
+					if(tree[i].child[j].name == name){
+						stock = tree[i].child[j].amount;
+						price = tree[i].child[j].price;
+						$("#product_id").text(tree[i].child[j].id);
+						break;
+					}
+				}
+				break;
+			}
+		}
+		$("#stock").text(stock);
+		$("#price").text(price);
+	}
+	
+	function sysIn(){
+		var num = $("#num").val()*1;
+		var stock = $("#stock").text()*1;
+		if(num > stock){
+			$("#sub").attr({"disabled":"disabled"});	
+		}else{
+			$("#sub").removeAttr("disabled");
+		}
+		$("#sum").text(num*$("#price").text());
+	}
+	
+	
+	$("#sub").click(function(){
+		var id  = $("#product_id").text();
+		var sum = $("#sum").text();
+		var amount = $("#num").val();
+		$.post("sold/add.action",{id:id,sum:sum,amount:amount},function(resp){
+			console.info(resp);
+			search();
+		});
+	});
+	
+	/*
+	获取当前商品是否有促销活动
+	*/
+	$("#get_discount_btn").click(function(){
+		var num = $("#num").val();
+		if(num == "" ){
+			alert("请务必填写完数量后再查找。");
+			return;
+		}
+		var sum = $("#sum").text();
+		var kind = $("#type").val();
+		var id = $("#product_id").text();
+		$.post("d/haveDiscount.action",{kind:kind,id:id},function(resp){
+// 			console.info(resp);
+			//计算那个更好
+			var html="";
+			if(resp.msg,length == 0){
+				//只有一条  直接展示
+				html +="<p>优惠类型:"+resp.msg[0].clas+"</p>";
+				html +="<p>优惠描述:"+resp.msg[0].describe+"</p>";
+				switch(resp.msg[0].clas)
+				{
+				case "折扣" : 
+					html +="<span>优惠方式:"+resp.msg[0].discount+"</span>";
+					$("#sum").text((sum*resp.msg[0].discount).toFixed(2));
+					break;
+				case "满减" : 
+					var m = resp.msg[0].discount.split("!")[0];
+					var j = resp.msg[0].discount.split("!")[1];
+					html +="<span>优惠方式:  满:"+m+"</span><span>减:"+j+"</span>";
+					if(sum >m){
+						$("#sum").text(sum-j);
+					}else{
+						html +="<span style='color='red''>未达到满减要求，还差"+(m-sum)+"</span>"
+					}
+					break;
+				case "满送" :
+					var m = resp.msg[0].discount.split("!")[0];
+					var j = resp.msg[0].discount.split("!")[1];
+					html +="<span>优惠方式:  满:"+m+"</span><span>送:"+j+"</span>";
+					if(sum >m){
+						html +="<span style='color='blue''>赠送</span>"
+					}else{
+						html +="<span style='color='red''>未达到满送要求，还差"+(m-sum)+"</span>"
+					}
+					break;
+				}
+				
+				
+				
+			}else{
+				//计算
+				
+				
+			}
+// 			html+="</h4>"
+			$("#discont").html(html);
+		});
+	});
+	
+	function search_discountByType(){
+		$.get("d/searchByclas.action",{clas:$("#c_type").val()},function(resp){
+			var html = "";
+			html += "<tr>"+
+			"<td>促销类型</td>"+
+			"<td>适用商品</td>"+
+			"<td>具体内容</td>"+
+			"<td>活动描述</td>"+
+		"</tr>";
+			//console.info(resp);
+			for(var i = 0;i<resp.msg.length;i++){
+				var s = resp.msg[i].suitable.split(",");
+				var kind = s[1].split("!");
+				var id = s[0].replace(/!/g,',');
+				var suit = "";
+				$.ajaxSettings.async = false;
+				$.get("product/select.action",{list:id},function(resp){
+					//console.info(resp);
+					for(var i = 0 ; i<resp.msg.length;i++){
+						suit +=resp.msg[i].name+",";
+					}
+				}); 
+				$.ajaxSettings.async = true; 
+				suit+=kind;
+				html += "<tr>"+
+				"<td>"+resp.msg[i].clas+"</td>"+
+				"<td>"+suit+"</td>";
+				if(resp.msg[i].clas == "折扣"){
+					html += "<td>"+resp.msg[i].discount+"</td>"
+				}else{
+//						console.info(resp.msg[i].clas);
+					html += "<td>"+resp.msg[i].clas.substring(0,1)+":"+resp.msg[i].discount.split("!")[0]+" "+resp.msg[i].clas.substring(1,2)+":"+resp.msg[i].discount.split("!")[1]+"</td>"
+				}
+				html +="<td>"+resp.msg[i].describe+"</td>"+
+			"</tr>";
+				
+			}
+			$("#dis").html(html);
+		})
+	}
+	
+</script>
+</html>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sm.Mapper.employeeMapper">
+	
+	<!--column不做限制，可以为任意表的字段，而property须为type 定义的pojo属性-->
+	<resultMap id="em_info" type="com.sm.response.employeeInfo">
+	<result  column="username" jdbcType="VARCHAR" property="username"/>
+	<association property="employee" javaType="com.sm.beans.employee">
+		<id column="em_id" jdbcType="INTEGER" property="em_id"/>
+		<result  column="pay" jdbcType="VARCHAR" property="pay"/>
+	</association>
+	<association property="attendance" javaType="com.sm.beans.attendance">
+		<result column="inTime" jdbcType="TIMESTAMP" property="inTime"/>
+		<result  column="outTime" jdbcType="TIMESTAMP" property="outTime"/>
+	</association>
+	</resultMap>
+	
+	<insert id="add">
+		insert into ${tableName} 
+		(em_id,pay) values
+		(
+			#{e.em_id},
+			#{e.pay}
+		)
+	</insert>
+	
+	<select id="search" resultMap="em_info">
+		select 
+		e.*,
+		a.inTime as inTime,
+		a.outTime as outTime,
+		u.username as username 
+		from ${realName1} e 
+		left join ${realName2} a 
+		on e.em_id = a.em_id 
+		left join user u on e.em_id = u.id
+	</select>
+	
+	<update id="update">
+		update ${tableName} SET
+		pay = #{e.pay}
+		where em_id = #{e.em_id}
+	</update>
+	
+	<delete id="delete">
+		delete FROM ${tableName} 
+		WHERE em_id = #{id}
+	</delete>
+	<select id="searchAll" resultType="com.sm.beans.employee">
+		select * from ${tableName}
+	</select>
+</mapper>

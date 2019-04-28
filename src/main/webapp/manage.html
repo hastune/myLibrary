@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>manage</title>
+<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+  <link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="./myJS/jquery2.0.js"></script>
+</head>
+<body>
+<div id="head"></div>
+		<script type="text/javascript">
+		 
+			$("#head").load("./head/head.jsp");
+		</script>
+		<div class="text-center">
+		<table class="table table-hover col-md-offset-3" style="width:50%" id="display_table"></table>
+		
+	<nav aria-label="Page navigation" >
+	  <ul class="pagination" id="page"></ul>
+	</nav>
+	
+	</div>
+</body>
+
+<script type="text/javascript">
+	$(function () { 
+		$.post("product/em_search.action",{page:1},function(resp){
+			var html =" ";
+			html += "<tbody><tr class='active'>"+
+			"<td>#</td>"+
+			"<td>商品名</td>"+
+			"<td>商品种类</td>"+
+			"<td>数量</td>"+
+			"<td>单价</td>"+
+			"<td>更新时间</td>"+
+		"</tr>";
+			for(var i = 0 ;i<resp.msg.length;i++){
+				if(resp.msg[i].type != 0){
+					html +=("<tr>"+
+							"<td>"+(i+1)+"</td>"+
+							"<td >"+resp.msg[i].name+"</td>"+
+							"<td >"+resp.msg[i].kind+"</td>"+
+						    "<td>"+resp.msg[i].amount+"</td>"+
+							"<td>¥"+resp.msg[i].type+"</td>"+
+							"<td>"+resp.msg[i].updateTime.substring(0,19)+"</td>"+
+						"</tr>");
+						}
+				}
+			html+="</tbody>"
+			$("#display_table").html(html);
+		});
+		count();
+	});
+	
+	function count(){
+		$.post("sold/count.action",{day:0,name:"_product"},function(resp){
+			//console.info(resp)
+			var html1 = " <li>"+
+			      "<a href='#' aria-label='Previous'>"+
+	        "<span aria-hidden='true'>&laquo;</span>"+
+	      "</a>"+
+	    "</li>";
+			if(resp.msg == 0){
+				html1 += "<li><a href='#'>1</a></li>"
+			}else{
+				for(var i = 0; i<resp.msg/10;i++){
+					html1 += "<li onclick='get("+(i+1)+")'><a>"+(i+1)+"</a></li>"
+				}
+			}
+			html1 += "<li>"+
+			      "<a href='#' aria-label='Next'>"+
+	       " <span aria-hidden='true'>&raquo;</span>"+
+	     " </a>"+
+	   " </li>";
+			$("#page").html(html1);
+		});
+	}
+</script>
+</html>

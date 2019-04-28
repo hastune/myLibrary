@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!--  <title>Insert title here</title>-->
+ <script type="text/javascript" src="./myJS/echarts.js"></script>
+</head>
+<body>
+	<input type="text" class="form-control col-md-offset-3" onkeyup="find()" id = "sc" style="width:15%" placeholder="请输入要搜索的内容">
+	<font class="col-md-offset-3"  id="sum">总价￥</font>
+	<table class="table table-hover col-md-offset-3" style="width:50%" id="display_table">
+		<tr class="active">
+			<td>#</td>
+			<td>商品名</td>
+			<td>数量</td>
+			<td>单价</td>
+			<td>总价</td>
+			<td>售出时间</td>
+		</tr>
+		<tr id="none">
+			<td>1</td>
+			<td>XXX</td>
+			<td>123</td>
+			<td>1.2</td>
+			<td>300</td>
+			<td>2018-12-12 12:12:12</td>
+		</tr>
+	</table>
+<!-- 	<font class="col-md-offset-3" id="hide">还没有员工上班!</font> -->
+<script type="text/javascript">
+$.post("sold/em_get.action",{day:1,name:"get",page:1},function(data){
+// 	console.info(data);
+	var html =" ";
+	var sum =0;
+	html += "<tbody><tr class='active'>"+
+	"<td>#</td>"+
+	"<td>商品名</td>"+
+	"<td>商品种类</td>"+
+	"<td>数量</td>"+
+	"<td>单价</td>"+
+	"<td>总价</td>"+
+	"<td>售出时间</td>"+
+"</tr>";
+	if(data.msg.length == 0){
+		$("#hide").show();
+	}else{
+		$("#hide").hide();
+		for(var i = 0 ;i<data.msg.length;i++){
+			html +=("<tr>"+
+			"<td>"+(i+1)+"</td>"+
+			"<td class='e_target'>"+data.msg[i].product.name+"</td>"+
+			"<td class='e_target'>"+data.msg[i].product.kind+"</td>"+
+		    "<td>"+data.msg[i].sold.amount+"</td>"+
+			"<td>"+data.msg[i].product.type+"</td>"+
+			"<td>"+data.msg[i].sold.sum+"</td>"+
+			"<td>"+data.msg[i].sold.time+"</td>"+
+		"</tr>");
+			sum += (data.msg[i].sold.sum*1);
+		}
+		//console.info(sum);
+		$("#sum").html("总价￥"+sum);
+	}
+	html+="</tbody>";
+	$("#display_table").html(html);
+});
+setTimeout(function(){
+	column = $("#display_table").find('tr');
+},150);
+
+function find(){
+	
+	var t = $("#sc").val();
+	//console.info(t);
+	//console.info(column);
+	for(var i = 1 ; i<column.length;i++){
+		var td = $(column[i]).find('td');
+		var num = 0;
+		for(var j = 0;j<td.length;j++){
+			if($(td[j]).attr("class") == "e_target" && $(td[j]).text().indexOf(t) > -1 ){
+				$(column[i]).show();
+				break;
+			}else{
+				num++;
+			}
+		}
+		if(num == td.length){
+			$(column[i]).hide();
+		}
+	}
+}
+</script>
+</body>
+</html>

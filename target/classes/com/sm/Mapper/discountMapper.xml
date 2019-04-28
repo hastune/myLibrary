@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sm.Mapper.discountMapper">
+	
+	<select id="search" resultType="com.sm.beans.discount">
+		select * from discount where p_id =#{id}
+	</select>
+	
+	<insert id="insert" parameterType="com.sm.beans.discount">
+		insert into discount values(#{clas},#{discount},#{p_id},#{describe},#{suitable});
+	</insert>
+	
+	<select id="searchByclas" resultType="com.sm.beans.discount">
+		select * from discount where p_id =#{id} and clas like #{clas}
+	</select>
+</mapper>
+   

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sm.Mapper.attendanceMapper">
+
+	<select id="searchNum" resultType="com.sm.response.attendanceResp">
+		select 
+		u.id as em_id,
+		u.username as name,
+		sum(a.num) as num 
+		from 
+		${value} a 
+		left join 
+		user u 
+		on 
+		u.id = a.em_id 
+		where 
+		DATE_SUB(CURDATE(), INTERVAL ${day} DAY) &lt;= date(a.inTime)
+		group by 
+		em_id
+	</select>
+	
+	
+	<select id="search_info" resultType="com.sm.response.attendanceResp">
+		select 
+		a.*,
+		u.username
+		from 
+		${tablename} a
+		left join 
+		user u 
+		on 
+		u.id = a.em_id 
+		where 
+		DATE_SUB(CURDATE(), INTERVAL #{day} DAY) &lt;= date(a.inTime)
+	</select>
+	
+	<insert id="addDefultClock">
+		insert into ${tableName}(em_id,num,createTime) values(#{id},1,#{createTime})
+	</insert>
+	
+<!-- 	查询当日有没有人打卡 -->
+	<select id="firstClock" resultType="java.lang.Integer">
+		select count(*) from ${tableName} where to_days(createTime) = to_days(now());
+	</select>
+	
+	<update id="clock">
+		update ${tableName}
+		SET 
+		<if test="a.inTime !=null ">
+			 inTime = #{a.inTime}
+		</if>
+		<if test="a.outTime !=null ">
+			outTime = #{a.outTime}
+		</if>
+		<if test="a.num ==0">
+			,num = 0
+		</if>
+		where em_id = #{a.em_id} and 
+		to_days(createTime) = to_days(now());
+	</update>
+	
+	<select id="get_config" resultType="com.sm.beans.privateConfig" parameterType="int">
+		SELECT * from
+		privateconfig
+		where u_id = #{id}
+	</select>
+	
+	<update id="update_config" parameterType="com.sm.beans.privateConfig">
+		update privateconfig 
+		SET 
+		go_to_work = #{go_to_work},
+		go_off_work = #{go_off_work},
+		deviation = #{deviation}
+		where u_id=#{u_id}
+	</update>
+	<insert id="insert_config" parameterType="com.sm.beans.privateConfig">
+		insert into privateconfig 
+		values(#{u_id},#{go_to_work},#{go_off_work},#{deviation})
+	</insert>
+</mapper>

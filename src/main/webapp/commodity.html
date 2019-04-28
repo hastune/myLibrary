@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="./myJS/jquery2.0.js"></script>
+    <link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<!--     <script src="./myJS/commodity.js"></script> -->
+    <script src="./bootstrap/js/bootstrap.min.js"></script>
+<title>commodity(商品页)</title>
+</head>
+<body>
+
+	<div id="head"></div>
+		
+		<script type="text/javascript">
+		 
+			$("#head").load("./head/head.jsp");
+		</script>
+	
+
+	<!-- 按钮触发模态框 -->
+	<div class="text-center">
+	<button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">添加商品</button>
+	</div>
+	<!-- 模态框（Modal） 添加商品 -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                <h4 class="modal-title" id="myModalLabel">商品信息</h4>
+	            </div>
+	            <div class="modal-body">
+	            	 <form>
+			         	<div class="form-group">
+			         		<label for="recipient-name" class="control-label">商品名称</label>
+		         			<input type="text" class="form-control" id="pro_name">
+			            </div>
+			          	<div class="form-group">
+			            	<label for="message-text" class="control-label">商品数量</label>
+			            	<input type="text" class="form-control" id="pro_num">
+			         	</div>
+			         	<div class="form-group">
+			            	<label for="message-text" class="control-label">商品种类</label>
+			            	<input type="text" class="form-control" id="pro_kind">
+			         	</div>
+			        </form>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	                <button type="button" class="btn btn-primary" id="add_btn" >提交</button>
+	            </div>
+	        </div><!-- /.modal-content -->
+	    </div><!-- /.modal -->
+	</div>
+	
+	<!-- 上下架 -->
+	<div class="modal fade" id="price" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                <h4 class="modal-title" id="myModalLabel">请输入上架后的价格作为单价</h4>
+	            </div>
+	            <div class="modal-body">
+	            	 <form>
+			         	<div class="form-group">
+			            	<label for="message-text" class="control-label">单价</label>
+			            	<input type="text" class="form-control" id="pro_price">
+			         	</div>
+			        </form>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	                <button type="button" class="btn btn-primary" id="price_btn">提交</button>
+	            </div>
+	        </div><!-- /.modal-content -->
+	    </div><!-- /.modal -->
+	</div>
+	
+	<!-- 添加优惠活动 -->
+	<div class="modal fade" id="dis_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                <h4 class="modal-title" id="myModalLabel">添加优惠活动</h4>
+	            </div>
+	            <div class="modal-body">
+	            	 <form>
+			         	<div class="form-group">
+			         		<label for="recipient-name" class="control-label" >活动类型</label>
+<!-- 		         			<input type="text" class="form-control" id="dis_kind"> -->
+								<select class="form-control" id="dis_kind">
+									<option>折扣</option>
+									<option>满减</option>
+									<option>满送</option>
+								</select>
+			            </div>
+			          	<div class="form-group">
+			            	<label for="message-text" class="control-label">适用商品</label>
+			            	<input type="text" class="form-control" id="dis_id">
+			            	<input type="text" class="form-control" id="dis_kindd">
+			            	<div class="form-inline">
+								<label class="control-label">类型:</label>
+								<select  class="form-control" onchange="kind_change()" id = "type">
+									<option>--请选择--</option>
+								</select>
+								<label>  名称:</label>
+								<select  class="form-control" id="name" onchange="name_change()">
+									<option>--请选择--</option>
+								</select>
+								<label id="product_id"  hidden></label>
+								<button type="button"  class="btn btn-lg btn-primary btn-sm"  onclick="add_id()" id="aid">添加</button>
+								<button type="button"  class="btn btn-lg btn-primary btn-sm"  onclick="add_kind()" id="akind">添加种类</button>
+							</div>
+			         	</div>
+			         	<div class="form-group">
+			            	<label for="message-text" class="control-label">具体内容</label>
+			            	
+			            	<input type="text" class="form-control" id="dis_k">
+			            	
+			            	<div class="input-group" id="manjian">
+							  <span class="input-group-addon">满</span>
+							  <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" id="dis_m">
+							  <span class="input-group-addon" id="dis_text">赠</span>
+							  <input type="text" class="form-control" id="dis_z">
+							</div>
+			            	
+			         	</div>
+			         	<div class="form-group">
+			            	<label for="message-text" class="control-label">其他描述</label>
+			            	<input type="text" class="form-control" id="dis_des">
+			         	</div>
+			        </form>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	                <button type="button" class="btn btn-primary" id="dis_add_btn">提交</button>
+	            </div>
+	        </div><!-- /.modal-content -->
+	    </div><!-- /.modal -->
+	</div>
+	
+	<!-- 显示商品详情 -->
+	<hr style="filter: alpha(opacity=100,finishopacity=0,style=3)" width="80%" color="#6f5499" size="3" />
+	<div class="table-responsive row text-center" >
+		<input type="text" class="form-control col-md-offset-3" onkeyup="find()" id = "sc" style="width:15%" placeholder="请输入要搜索的内容">
+		<table class="table table-hover col-md-offset-3" style="width:1000px;" id="display_table">
+		<tr>
+			<td>#</td>
+			<td>名称</td>
+			<td>数量</td>
+			<td>类型</td>
+			<td>更新时间</td>
+			<td>是否上架</td>
+			<td>   </td>
+			<!--  <td><button>修改</button></td>-->
+		</tr>
+		<tr id="none">
+			<td>还</td>
+			<td>没</td>
+			<td>有</td>
+			<td>商</td>
+			<td>品</td>
+			<td>哦</td>
+		</tr>
+			
+		</table>
+<nav aria-label="Page navigation" >
+  <ul class="pagination" id="page">
+    <li>
+      <a href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <li><a href="#">1</a></li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="#">5</a></li>
+    <li>
+      <a href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+	</div>
+	
+	<!-- 商品优惠活动添加和查询 -->
+	<div >
+		<div class="text-center">
+			<h2 >现行的优惠活动</h2>
+		</div>
+			<table class="table table-hover col-md-offset-3 col-md-6" style="width:955px;"  id="dis">
+				<tr>
+					<td>促销类型</td>
+					<td>适用商品</td>
+					<td>具体内容</td>
+					<td>活动描述</td>
+				</tr>
+			</table>
+		<div class="row">
+			<button class="btn btn-default col-md-6 col-md-offset-3" data-toggle="modal" data-target="#dis_modal">+</button>
+		</div>
+	</div>
+</body>
+
+
+	<script type="text/javascript">
+		$("#manjian").hide();
+		var column;
+		$(document).ready(function(){
+			search();
+			get_discount();
+			search1();
+		});
+	
+		
+		$("#add_btn").click(function(){
+			var name = $("#pro_name").val();
+			var num = $("#pro_num").val();
+			var kind = $("#pro_kind").val();
+			if(name == "" || num == ""){
+				alert("不能为空");
+				return false;
+			}
+			$.post("product/add.action",{name:name,num:num,kind:kind},function(data){
+				$('#myModal').modal('hide');
+				alert(data.msg);
+				if(data.status==200){
+					search();
+				}
+			});
+		});
+		
+		//获取当前用户的库存状态
+		function search(){
+			count();
+			get(1);
+			setTimeout(function(){
+				column = $("#display_table").find('tr');
+			},150);
+			
+		}
+		
+		function count(){
+			$.post("sold/count.action",{day:0,name:"_product"},function(resp){
+				//console.info(resp)
+				var html1 = " <li>"+
+				      "<a href='#' aria-label='Previous'>"+
+		        "<span aria-hidden='true'>&laquo;</span>"+
+		      "</a>"+
+		    "</li>";
+				if(resp.msg == 0){
+					html1 += "<li><a href='#'>1</a></li>"
+				}else{
+					for(var i = 0; i<resp.msg/10;i++){
+						html1 += "<li onclick='get("+(i+1)+")'><a>"+(i+1)+"</a></li>"
+					}
+				}
+				html1 += "<li>"+
+				      "<a href='#' aria-label='Next'>"+
+		       " <span aria-hidden='true'>&raquo;</span>"+
+		     " </a>"+
+		   " </li>";
+				$("#page").html(html1);
+			});
+		}
+		
+		function get(page){
+			$.post("product/search.action",{page:page},function(data){
+				if(data.status == 201){
+					$("#none").hide();
+					$("#display_table").html("<tr><td>#</td><td>名称</td><td>数量</td><td>类型</td><td>更新时间</td><td>是否上架</td><td>   </td></tr>");
+					for(var i = 0; i<data.msg.length;i++){
+						var tr = $("<tr></tr>");
+						
+						var td1 = $("<td></td>");
+						var td2 = $("<td></td>");
+						var td3 = $("<td></td>");
+						var td4 = $("<td></td>");
+						var td5 = $("<td></td>");
+						var td6 = $("<td></td>");
+						var btn1 = $("<button class='change'  onclick='updown(event)' cid="+data.msg[i].id+">上架/下架</button>");
+						var btn2 = $("<button class='change' cid="+data.msg[i].id+">删除</button>");
+						var td7 = $("<td></td>");
+						
+						td1.text(i+1);
+						td2.text(data.msg[i].name);
+						td3.text(data.msg[i].amount);
+						td4.text(data.msg[i].updateTime);
+						td5.text(data.msg[i].type != 0 ? "￥"+data.msg[i].type:"未上架");
+							td5.attr("tid",data.msg[i].type)
+							td5.attr("class","type"+data.msg[i].id)
+						td6.append(btn1);
+						td6.append(btn2);
+						td7.text(data.msg[i].kind);
+						
+						tr.append(td1);
+						tr.append(td2);
+						tr.append(td3);
+						tr.append(td7);
+						tr.append(td4);
+						tr.append(td5);
+						tr.append(td6);
+						tr.append(td6);
+						
+						$("#display_table").append(tr);
+					}
+					
+				}else if(data.status == 400){
+					alert("获取数据失败");
+				}
+			});
+		}
+		
+		
+		$("#display_table").click(function(event){
+			var t = $(event.target);
+			pro_pid = t.attr("cid");
+			console.info(pro_pid);
+			if(t.html() == "删除"){
+				$.post("product/delect.action",{id:pro_pid},function(data){
+					if(data.status == 200){
+						search();
+					}
+				});
+			}
+		});
+		
+		
+		function updown(e){
+			//console.info(e.target);
+			var cid = $(e.target).attr("cid");
+			if($(".type"+cid).attr("tid")>0){
+				//已经上架
+				setTimeout(function(){
+					$.post("product/changeType.action",{id:pro_pid,type:0},function(data){
+						if(data.status == 200){
+							search();
+						}
+					});
+				},5);
+			}else{
+				$('#price').modal('show');
+			}
+		}
+		
+		$("#price_btn").click(function(){
+			$('#price').modal('hide');
+			var price = $("#pro_price").val();
+			$.post("product/changeType.action",{id:pro_pid,type:price},function(data){
+				if(data.status == 200){
+					search();
+				}
+			});
+		});
+		
+		function find(){
+			var t = $("#sc").val();
+			for(var i = 1 ; i<column.length;i++){
+				var td = $(column[i]).find('td');
+				var num = 0;
+				for(var j = 0;j<td.length;j++){
+					if($(td[j]).text().indexOf(t) > -1 ){
+						$(column[i]).show();
+						break;
+					}else{
+						num++
+					}
+				}
+				if(num == td.length){
+					$(column[i]).hide();
+				}
+			}
+		}
+		
+		function get_discount(){
+			var html = "<tr>"+
+				"<td>促销类型</td>"+
+				"<td>适用商品</td>"+
+				"<td>具体内容</td>"+
+				"<td>活动描述</td>"+
+				"<td style='width:100px;'></td>"+
+			"</tr>";
+			$.get("d/search.action",function(resp){
+// 				console.info(resp);
+				for(var i = 0 ; i<resp.msg.length;i++){
+					var s = resp.msg[i].suitable.split(",");
+					var kind = s[1].split("!");
+					var id = s[0].replace(/!/g,',');
+					//console.info(id);
+					var suit = "";
+					$.ajaxSettings.async = false;
+					$.get("product/select.action",{list:id},function(resp){
+						//console.info(resp);
+						for(var i = 0 ; i<resp.msg.length;i++){
+							suit +=resp.msg[i].name+",";
+						}
+					}); 
+					$.ajaxSettings.async = true; 
+					suit+=kind;
+					
+					html += "<tr>"+
+					"<td>"+resp.msg[i].clas+"</td>"+
+					"<td>"+suit+"</td>";
+					if(resp.msg[i].clas == "折扣"){
+						html += "<td>"+resp.msg[i].discount+"</td>"
+					}else{
+// 						console.info(resp.msg[i].clas);
+						html += "<td>"+resp.msg[i].clas.substring(0,1)+":"+resp.msg[i].discount.split("!")[0]+" "+resp.msg[i].clas.substring(1,2)+":"+resp.msg[i].discount.split("!")[1]+"</td>"
+					}
+					html +="<td>"+resp.msg[i].describe+"</td>"+
+					"<td><button>取消</button></td>"+
+				"</tr>";
+				}
+				$("#dis").html(html);
+			});
+		}
+		
+		/**
+		 * 当添加类型改变的时候 改变具体方法选择框样式
+		 * @returns
+		 */
+		$("#dis_kind").change(function(){
+			var kind = $("#dis_kind").val();
+			switch(kind)
+			{
+			case "折扣":
+				$("#dis_k").show();
+				$("#manjian").hide();
+				break;
+			case "满减":
+				$("#dis_k").hide();
+				$("#dis_text").text("减");
+				$("#manjian").show();
+				break;
+			case "满送":
+				$("#dis_k").hide();
+				$("#dis_text").text("送");
+				$("#manjian").show();
+				break;
+			}
+		});
+		
+		
+		function search1(){
+			tree = [];
+			$.post("product/search.action",{page:-1},function(resp){
+				//console.info(resp);
+				for(var i = 0 ; i<resp.msg.length;i++){
+					if(tree.length == 0){
+						var kind1 = {name:resp.msg[i].kind,child:[]};
+						//添加子节点
+						var name = {name:resp.msg[i].name,amount:resp.msg[i].amount,
+											price:resp.msg[i].type,id:resp.msg[i].id};
+						kind1.child.push(name);
+						tree.push(kind1);
+					}else{
+						var length = tree.length;
+						for(var j = 0 ; j<length;j++){
+							//判断当前商品类型是否在tree中的已经包含，包含则将当前商品添加到子节点 否则添加新的父节点，
+							if(resp.msg[i].kind == tree[j].name){
+								//添加到子节点
+								var name = {name:resp.msg[i].name,amount:resp.msg[i].amount,
+										price:resp.msg[i].type,id:resp.msg[i].id};
+								tree[j].child.push(name);
+								break;
+							}else{
+								//添加新kind
+								var kind1 = {name:resp.msg[i].kind,child:[]};
+								//添加子节点
+								var name = {name:resp.msg[i].name,amount:resp.msg[i].amount,
+													price:resp.msg[i].type,id:resp.msg[i].id};
+								kind1.child.push(name);
+								tree.push(kind1);
+								break;
+							}
+						}
+					}
+					
+				}
+				//将数据填充到类型选择的select标签中去
+				var html = "";
+				for(var i = 0 ; i<tree.length;i++){
+					html +=  "<option>"+tree[i].name+"</option>";
+				}
+				$("#type").html(html);
+				html= "";
+				for(var j = 0 ;j<tree[0].child.length;j++){
+					html +="<option>"+tree[0].child[j].name+"</option>";
+				}
+				$("#product_id").text(tree[0].child[0].id);
+				$("#name").html(html);
+			});
+		}
+
+		//多级下拉框模块
+		function kind_change(){
+			var type =$("#type").get(0).value;
+			var html = "";
+			for(var i = 0 ; i< tree.length;i++){
+				if(type == tree[i].name){
+					//取出child中的数据
+					//console.info( tree[i]);
+					for(var j = 0 ;j<tree[i].child.length;j++){
+						if(tree[i].child[j].price != 0){
+							html +="<option>"+tree[i].child[j].name+"</option>";
+							$("#aid").removeAttr("disabled");
+						}else{
+							html +="<option>该类别没有商品</option>";
+							$("#aid").attr("disabled","disabled");
+						}
+					}
+					$("#name").html(html);
+					$("#product_id").text(tree[i].child[0].id);
+				}
+			}
+		}
+		//多级下拉框模块
+		function name_change(){
+			var type =$("#type").get(0).value;
+			var name =$("#name").get(0).value;
+			for(var i  = 0;i<tree.length;i++){
+				if(type == tree[i].name){
+					for(var j = 0 ;j<tree[i].child.length;j++){
+						if(tree[i].child[j].name == name){
+							$("#product_id").text(tree[i].child[j].id);
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+			
+		//添加商品按钮
+		function add_id(){
+			var newid = $("#product_id").text();
+			var iid = $("#dis_id").val()
+			if(iid.indexOf(newid) == -1){
+				//存在则不添加
+				$("#dis_id").val(iid+newid+"!");
+			}
+		}
+		
+		//添加种类按钮
+		function add_kind(){
+			var newid = $("#type").val();
+			var iid = $("#dis_kindd").val()
+			if(iid.indexOf(newid) == -1){
+				//存在则不添加
+				$("#dis_kindd").val(iid+newid+"!");
+			}
+		}
+		
+		//提交
+		$("#dis_add_btn").click(function(){
+			//促销活动类型
+			var kind = $("#dis_kind").val();
+			//适用范围(适用类型)
+			var s_kind = $("#dis_kindd").val();
+			//适用范围(适用商品)
+			var s_id = $("#dis_id").val();
+			//折扣
+			var dis_k = $("#dis_k").val();
+			//满
+			var dis_m = $("#dis_m").val();
+			// 减/赠
+			var dis_z = $("#dis_z").val();
+			//促销描述
+			var dis_des = $("#dis_des").val();
+			var discount;
+			var suitable;
+			if(kind == "折扣"){
+				discount = dis_k;
+			}else{
+				discount = dis_m+"!"+dis_z;
+			}
+			suitable = s_id+","+s_kind;
+
+			 $.ajax({
+                 url : 'd/insert.action',
+                 type: "post",
+                 async: true,
+                 data : JSON.stringify({clas:kind,discount:discount,describe:dis_des,suitable:suitable}),
+                 dataType: 'json',
+                 contentType: 'application/json;charset=UTF-8',
+                 success:function(resp){
+                	 alert(resp.msg);
+                 }
+             });
+		});
+	</script>
+</html>

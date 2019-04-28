@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sm.Mapper.productMapper">
+	
+
+	<insert id="add">
+		insert into ${tableName} (name,amount,updateTime,kind) values
+		(
+			#{p.name},
+			#{p.amount},
+			#{p.updateTime},
+			#{p.kind}
+		);
+	</insert>
+	
+	<select id="search" resultType="com.sm.beans.product">
+		select * 
+		from ${tableName}
+		<if test="page != -20">
+		limit #{page},10
+		</if>
+		
+	</select>
+	
+	<select id="searchById" resultType="com.sm.beans.product">
+		select * 
+		from ${tableName} 
+		where id = #{id}
+	</select>
+	
+	<select id="sameName" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select sum(1) from ${tableName} where name like #{productName};
+	</select>
+	
+	<update id="changeType">
+		update ${tableName} SET 
+		type = #{type},
+		updateTime = #{updateTime}
+		where id = #{id}
+	</update>
+	
+	<update id="changeAmount">
+		update ${tableName} SET 
+		amount = #{amount},
+		updateTime = #{updateTime}
+		where id = #{id}
+	</update>
+	
+	<delete id="delect">
+		DELETE FROM ${tableName} 
+		WHERE id = #{id}
+	</delete>
+	
+	<select id="select_byId" resultType="com.sm.beans.product">
+		select * from ${tablename} where id in(${list});
+	</select>
+</mapper>
+
