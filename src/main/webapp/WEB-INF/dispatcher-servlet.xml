@@ -15,6 +15,7 @@
         http://www.springframework.org/schema/tx 
 		http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
         
+        
    <cxt:annotation-config />
    <mvc:annotation-driven/>
    <cxt:component-scan base-package="com.sm.web,com.sm.utils,com.sm.Service.impl" />

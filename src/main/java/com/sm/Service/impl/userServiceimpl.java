@@ -43,6 +43,8 @@ public class userServiceimpl implements userService{
 	public void createTable(String sign) {
 		usermapper.createProduct(sign+"_product");
 		usermapper.createSold(sign+"_sold");
+		usermapper.createAttendance(sign+"_attendance");
+		usermapper.createEmployee(sign+"_employee");
 	}
 	
 	@PostConstruct

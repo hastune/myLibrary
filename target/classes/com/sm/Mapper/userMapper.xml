@@ -36,22 +36,38 @@
  	
  	<update id="createSold" parameterType="java.lang.String">
  		 CREATE TABLE ${newTableName}(
- 		 	id INT(10) NULL,
- 		 	name VARCHAR(30) NULL,
- 		 	price DECIMAL(30,2) NULL,
- 		 	amount INT(30) NULL,
- 		 	sum DECIMAL(30,2) NULL
- 		 )
+ 		 	`id` int(10) DEFAULT NULL,
+		  `amount` int(30) DEFAULT NULL,
+		  `sum` decimal(30,2) DEFAULT NULL,
+		  `time` datetime DEFAULT NULL
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
  	</update>
  	<update id="createProduct" parameterType="java.lang.String">
  		 CREATE TABLE ${newTableName} (
-		  `id` int(10) NOT NULL AUTO_INCREMENT,
+		   `id` int(10) NOT NULL AUTO_INCREMENT,
 		  `amount` int(255) DEFAULT NULL,
 		  `updateTime` datetime(6) DEFAULT NULL,
-		  `name` varchar(255) DEFAULT NULL,
-		  `type` int(1) DEFAULT '0' COMMENT '0 未上架 1 上架',
-		  PRIMARY KEY (`id`)
-		) 
+		  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+		  `type` decimal(65,2) DEFAULT '0.00' COMMENT '0 未上架 1 上架',
+		  `kind` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '商品种类',
+		  PRIMARY KEY (`id`) USING BTREE
+		) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+ 	</update>
+ 	<update id="createEmployee" parameterType="java.lang.String">
+ 	CREATE TABLE ${newTableName} (
+	  `em_id` int(30) NOT NULL,
+	  `pay` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+	  PRIMARY KEY (`em_id`) USING BTREE
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+ 	</update>
+ 	
+ 	<update id="createAttendance" parameterType="java.lang.String">
+ 	CREATE TABLE ${newTableName} (
+	  `em_id` int(30) DEFAULT NULL,
+	  `inTime` datetime DEFAULT NULL,
+	  `outTime` datetime DEFAULT NULL,
+	  `num` int(255) DEFAULT NULL COMMENT '每日下班计算是否旷工,0:正常,1:旷工'
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
  	</update>
  	
  	<update id="hire">

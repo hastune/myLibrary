@@ -19,6 +19,10 @@ public interface userMapper {
 	
 	void createProduct(@Param("newTableName")String newTableName);
 	
+	void createAttendance(@Param("newTableName")String newTableName);
+	
+	void createEmployee(@Param("newTableName")String newTableName);
+	
 	List<privateConfig> getConfig();
 	
 	void hire(@Param("p_id")int p_id,@Param("id")int id);
