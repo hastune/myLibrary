@@ -24,6 +24,17 @@
 		
 	</select>
 	
+<!-- 	店员专用 -->
+	<select id="newSearch" resultType="com.sm.beans.product">
+		select * 
+		from ${tableName}
+		where type>0
+		<if test="page != -20">
+		limit #{page},10
+		</if>
+		
+	</select>
+	
 	<select id="searchById" resultType="com.sm.beans.product">
 		select * 
 		from ${tableName} 

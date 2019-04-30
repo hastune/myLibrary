@@ -86,6 +86,26 @@ public class productController {
 		return cr;
 	}
 	
+	
+	@RequestMapping("new_search.action")
+	@ResponseBody
+	public currencyResponce new_search(HttpServletRequest rq,int page) {
+		currencyResponce cr = new currencyResponce();
+		user u = new user();
+		u.setId(	getRequestInfo.get_pid(rq));
+		List<product> l = ps.newSearch(us.login(u).getUsername()+"_product",page);
+		if(l.size()>0) {
+			cr.setMsg(l);
+			cr.setStatus(201);
+		}else {
+			cr.setMsg(l);
+			cr.setStatus(204);
+		}
+		cr.setType(1);
+		cr.setUrl(null);
+		return cr;
+	}
+	
 	@RequestMapping("delect.action")
 	@ResponseBody
 	public currencyResponce delect(int id,HttpServletRequest rq) {

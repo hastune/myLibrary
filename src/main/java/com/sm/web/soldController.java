@@ -112,6 +112,13 @@ public class soldController {
 		return c;
 	}
 	
+	/**
+	 * 
+	 * @param rq
+	 * @param name
+	 * @param day
+	 * @return
+	 */
 	@RequestMapping("/count.action")
 	public currencyResponce count(HttpServletRequest rq,String  name,String day) {
 		currencyResponce c = new currencyResponce(200);
@@ -123,32 +130,11 @@ public class soldController {
 			int id = u.getP_id();
 			u = new user();
 			u.setId(id);
-			c.setMsg(ss.count(us.login(u).getUsername()+name,day));
+			c.setMsg(ss.newCount(us.login(u).getUsername()+name,day));
 		}
 		return c;
 	}
 	
 	
-	/*
-	@RequestMapping("/Turnover.action")
-	public double getTurnover(HttpServletRequest hr) {
-		Cookie[] Cookies = hr.getCookies();
-		int userid = -1;//店主id
-		for(Cookie e : Cookies) {
-			if(e.getName().equals("identity")) {
-				String[] s = e.getValue().split("%");
-				//cookie合法性校验
-				if(s.length == 2) {
-					if(s[1].equals("0")) {
-						//如果是0 则说明当前是店长 id在第一位
-						userid = new Integer(s[0]);
-					}else{
-						userid = new Integer(s[1]);
-					}
-				}
-			}
-		}
-		return ss.getTurnover(userid);
-	}
-	*/
+	
 }

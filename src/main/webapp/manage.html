@@ -30,7 +30,40 @@
 
 <script type="text/javascript">
 	$(function () { 
-		$.post("product/em_search.action",{page:1},function(resp){
+		get(1);
+		count();
+	});
+	
+	function count(){
+		/*
+		获取总数
+		*/
+		$.post("sold/count.action",{day:0,name:"_product"},function(resp){
+			//console.info(resp)
+			var html1 = " <li>"+
+			      "<a href='#' aria-label='Previous'>"+
+	        "<span aria-hidden='true'>&laquo;</span>"+
+	      "</a>"+
+	    "</li>";
+			if(resp.msg == 0){
+				html1 += "<li><a href='#'>1</a></li>"
+			}else{
+				for(var i = 0; i<resp.msg/10;i++){
+					html1 += "<li onclick='get("+(i+1)+")'><a>"+(i+1)+"</a></li>"
+				}
+			}
+			html1 += "<li>"+
+			      "<a href='#' aria-label='Next'>"+
+	       " <span aria-hidden='true'>&raquo;</span>"+
+	     " </a>"+
+	   " </li>";
+			$("#page").html(html1);
+		});
+		
+	}
+	
+	function get(page){
+		$.post("product/new_search.action",{page:page},function(resp){
 			var html =" ";
 			html += "<tbody><tr class='active'>"+
 			"<td>#</td>"+
@@ -54,31 +87,6 @@
 				}
 			html+="</tbody>"
 			$("#display_table").html(html);
-		});
-		count();
-	});
-	
-	function count(){
-		$.post("sold/count.action",{day:0,name:"_product"},function(resp){
-			//console.info(resp)
-			var html1 = " <li>"+
-			      "<a href='#' aria-label='Previous'>"+
-	        "<span aria-hidden='true'>&laquo;</span>"+
-	      "</a>"+
-	    "</li>";
-			if(resp.msg == 0){
-				html1 += "<li><a href='#'>1</a></li>"
-			}else{
-				for(var i = 0; i<resp.msg/10;i++){
-					html1 += "<li onclick='get("+(i+1)+")'><a>"+(i+1)+"</a></li>"
-				}
-			}
-			html1 += "<li>"+
-			      "<a href='#' aria-label='Next'>"+
-	       " <span aria-hidden='true'>&raquo;</span>"+
-	     " </a>"+
-	   " </li>";
-			$("#page").html(html1);
 		});
 	}
 </script>

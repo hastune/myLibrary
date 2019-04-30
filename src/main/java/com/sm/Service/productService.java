@@ -11,6 +11,8 @@ public interface productService {
 	
 	List<product> search(String tablename,int page);
 	
+	List<product> newSearch(String tablename,int page);
+	
 	Integer sameName(String productName,String tableName);
 	
 	Integer changeType(int id,String tableName,float type);

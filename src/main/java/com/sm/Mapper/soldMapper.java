@@ -24,4 +24,6 @@ public interface soldMapper {
 			@Param("day")String day,@Param("kind")String kind);
 	
 	Integer count(@Param("tableName")String tablename,@Param("day")String day);
+	
+	Integer newCount(@Param("tableName")String tablename,@Param("day")String day);
 }

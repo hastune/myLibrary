@@ -12,6 +12,8 @@ public interface productMapper {
 	
 	List<product> search(@Param("tableName")String tableName,@Param("page")int page);
 	
+	List<product> newSearch(@Param("tableName")String tableName,@Param("page")int page);
+	
 	Integer sameName(@Param("productName")String productName,@Param("tableName")String tableName);
 	
 	Integer changeType(@Param("id")int id,@Param("tableName")String tableName,@Param("type")float type,

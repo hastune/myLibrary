@@ -19,4 +19,6 @@ public interface soldService {
 	Integer  add(String tableName,sold s);
 	
 	Integer  count(String tableName,String day);
+	
+	Integer newCount(String tableName,String day);
 }

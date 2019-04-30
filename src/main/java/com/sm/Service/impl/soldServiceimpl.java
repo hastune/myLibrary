@@ -59,4 +59,10 @@ public class soldServiceimpl implements soldService{
 		return soldmapper.count(tableName,day);
 	}
 
+
+	@Override
+	public Integer newCount(String tableName, String day) {
+		return soldmapper.newCount(tableName, day);
+	}
+
 }

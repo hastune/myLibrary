@@ -84,6 +84,16 @@
 		</if>
 	</select>
 	
+<!-- 	店员使用的查找商品总数的语句 排除了未上架的商品 -->
+	<select id="newCount" resultType="java.lang.Integer">
+		select count(0) from ${tableName}
+		<if test="day != 0">
+			where 
+			DATE_SUB(CURDATE(), INTERVAL ${day} DAY) &lt;= date(time)
+		</if>
+		where type >0
+	</select>
+	
 	<insert id="add">
 			insert into ${tableName} 
 			(id,amount,sum,time) values (#{s.id},#{s.amount},#{s.sum},#{s.time})

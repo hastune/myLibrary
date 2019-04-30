@@ -69,5 +69,10 @@ public class productServiceimpl implements productService{
 	public List<product> select_byId(String tableName, String list) {
 		return pm.select_byId(tableName, list);
 	}
+
+	@Override
+	public List<product> newSearch(String tablename, int page) {
+		return pm.newSearch(tablename,(page-1)*10);
+	}
 	
 }
